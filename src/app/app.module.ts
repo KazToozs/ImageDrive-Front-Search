@@ -14,12 +14,15 @@ import { HomePageComponent } from './component/home-page/home-page.component';
 import { SearchBarComponent } from './component/search-bar/search-bar.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SearchDataService } from './services/search-data.service';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { ScrollerComponent } from './component/scroller/scroller.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomePageComponent,
     SearchBarComponent,
+    ScrollerComponent,
   ],
   imports: [
     BrowserModule,
@@ -30,6 +33,7 @@ import { SearchDataService } from './services/search-data.service';
     MatIconModule, MatInputModule,
     MatAutocompleteModule,
     MatChipsModule,
+    ScrollingModule,
     MatFormFieldModule
   ],
   providers: [

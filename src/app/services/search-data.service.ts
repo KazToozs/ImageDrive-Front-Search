@@ -7,14 +7,27 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class SearchDataService {
-  searchOption = [];
+  searchOptions = [];
+  pageNumber = 0;
   public searchResults: SearchResult[];
   // TODO set this to .env file?
-  SEARCH_URL = 'http://localhost:8080/search';
+  PAGE_PARAM: string;
+  FIELD_PARAM: string; // TODO set this to the searchOptions filter
+  SEARCH_URL: string;
+  //TODO delete this
+  constructor(private http: HttpClient) {
+    this.updateSearchUrl()
+   }
 
-  constructor(private http: HttpClient) { }
+   updateSearchUrl() {
+    this.PAGE_PARAM = 'page=' + this.pageNumber;
+    this.FIELD_PARAM = 'field=' + 'description'; // TODO set this to the searchOptions filter
+    this.SEARCH_URL = 'http://localhost:8080/search/?' + this.PAGE_PARAM + "&" + this.FIELD_PARAM;
+   }
 
-  getSearchResults(): Observable<SearchResult[]> {
+  getSearchResults() {
+    this.updateSearchUrl()
+    console.log(this.SEARCH_URL)
     return this.http.get<SearchResult[]>(this.SEARCH_URL);
   }
 
@@ -22,8 +35,8 @@ export class SearchDataService {
     const results = this.searchResults;
     const filteredResultsList = [];
     for (const result of results) {
-      for (const options of this.searchOption) {
-        if (options.title === result.description) {
+      for (const options of this.searchOptions) {
+        if (options.description === result.description) {
           filteredResultsList.push(result);
         }
       }

@@ -9,24 +9,20 @@ import { SearchDataService } from 'src/app/services/search-data.service';
 })
 export class HomePageComponent implements OnInit {
 
-  results: SearchResult[]
+  results: SearchResult[];
   constructor(
     private dataService: SearchDataService
   ) { }
 
   ngOnInit() {
-    this.dataService.getSearchResults().subscribe(results => {
-      this.results = results;
-      this.dataService.searchResults = results;
-    });
   }
 
   onSelectedFilter(e) {
-    this.getFilteredExpenseList();
+    this.getFilteredList();
   }
 
-  getFilteredExpenseList() {
-    if (this.dataService.searchOption.length > 0) {
+  getFilteredList() {
+    if (this.dataService.searchOptions.length > 0) {
       this.results = this.dataService.filteredListOptions();
     }
     else {

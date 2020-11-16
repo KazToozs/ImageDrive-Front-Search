@@ -17,17 +17,22 @@ export class SearchBarComponent implements OnInit {
     autoCompleteList: any[]
 
     @ViewChild('autocompleteInput') autocompleteInput: ElementRef;
-    @Output() onSelectedOption = new EventEmitter();
+    @Output() selectedOption = new EventEmitter();
 
     constructor(
-        protected dataService: SearchDataService
+        public dataService: SearchDataService
     ) { }
 
     ngOnInit() {
 
         // get all the post
-        this.dataService.getSearchResults().subscribe(results => {
-            this.allResults = results;
+        this.dataService.getSearchResults().subscribe(res => {
+          console.log(res)
+          let convertedResults: SearchResult[] = [];
+          res.forEach((item) => {
+            convertedResults.push(item['_source'])
+          })
+            this.allResults = convertedResults;
 
         });
 
@@ -64,25 +69,25 @@ export class SearchBarComponent implements OnInit {
     filterResultList(event) {
         let result = event.source.value;
         if (!result) {
-            this.dataService.searchOption = []
+            this.dataService.searchOptions = []
         }
         else {
 
-            this.dataService.searchOption.push(result);
-            this.onSelectedOption.emit(this.dataService.searchOption)
+            this.dataService.searchOptions.push(result);
+            this.selectedOption.emit(this.dataService.searchOptions)
         }
         this.focusOnPlaceInput();
     }
 
     removeOption(option) {
 
-        const index = this.dataService.searchOption.indexOf(option);
+        const index = this.dataService.searchOptions.indexOf(option);
         if (index >= 0) {
-          this.dataService.searchOption.splice(index, 1);
+          this.dataService.searchOptions.splice(index, 1);
         }
         this.focusOnPlaceInput();
 
-        this.onSelectedOption.emit(this.dataService.searchOption)
+        this.selectedOption.emit(this.dataService.searchOptions)
     }
 
     // focus the input field and remove any unwanted text.

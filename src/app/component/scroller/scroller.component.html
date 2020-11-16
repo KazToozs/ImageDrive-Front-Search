@@ -1,0 +1,17 @@
+<div>
+<cdk-virtual-scroll-viewport itemSize="150" class="scroll-viewport">
+  <li *cdkVirtualFor="let result of dataSource">
+
+    <div *ngIf="result" class="result-item">
+      <p><strong>Description :</strong> {{result.description}}</p>
+      <p><strong>Type: </strong>{{result.type}}</p>
+      <p><strong>Size: </strong>{{result.size}}</p>
+    </div>
+    <div *ngIf="!result">
+      Loading ...
+    </div>
+    <hr class="solid">
+  </li>
+
+</cdk-virtual-scroll-viewport>
+</div>
