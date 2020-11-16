@@ -17,18 +17,4 @@ export class HomePageComponent implements OnInit {
   ngOnInit() {
   }
 
-  onSelectedFilter(e) {
-    this.getFilteredList();
-  }
-
-  getFilteredList() {
-    if (this.dataService.searchOptions.length > 0) {
-      this.results = this.dataService.filteredListOptions();
-    }
-    else {
-      this.results = this.dataService.searchResults;
-    }
-
-  }
-
 }

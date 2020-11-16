@@ -1,47 +1,68 @@
 import { SearchResult } from '../searchResult';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
+
+// @Injectable({
+//   providedIn: 'root'
+// })
+// export class SearchDataService {
+//   private searchResults: Observable<SearchResult[]>;
+
+//   //TODO delete this
+//   constructor(private http: HttpClient) {
+//    }
+
+//   getSearchResults(pageNumber, description) {
+//     // TODO put these in .env file?
+//     let PAGE_PARAM = 'page=' + pageNumber;
+//     let FIELD_PARAM = 'field=' + 'description';
+//     let SEARCH_URL = 'http://localhost:8080/search/?' + PAGE_PARAM + "&" + FIELD_PARAM;    console.log(SEARCH_URL)
+
+//     this.searchResults = this.http.get<SearchResult[]>(SEARCH_URL);
+//   }
+
+// }
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchDataService {
-  searchOptions = [];
-  pageNumber = 0;
-  public searchResults: SearchResult[];
-  // TODO set this to .env file?
-  PAGE_PARAM: string;
-  FIELD_PARAM: string; // TODO set this to the searchOptions filter
-  SEARCH_URL: string;
-  //TODO delete this
+  private _searchResults: BehaviorSubject<SearchResult[]> = new BehaviorSubject([]);
+  pageNumber: number = 0;
+  descriptionFilter: string = '';
+  fileType = 'PNG';
+  public readonly searchResults: Observable<SearchResult[]> = this._searchResults.asObservable();
+
   constructor(private http: HttpClient) {
-    this.updateSearchUrl()
-   }
-
-   updateSearchUrl() {
-    this.PAGE_PARAM = 'page=' + this.pageNumber;
-    this.FIELD_PARAM = 'field=' + 'description'; // TODO set this to the searchOptions filter
-    this.SEARCH_URL = 'http://localhost:8080/search/?' + this.PAGE_PARAM + "&" + this.FIELD_PARAM;
-   }
-
-  getSearchResults() {
-    this.updateSearchUrl()
-    console.log(this.SEARCH_URL)
-    return this.http.get<SearchResult[]>(this.SEARCH_URL);
+    // load initial data
   }
 
-  filteredListOptions() {
-    const results = this.searchResults;
-    const filteredResultsList = [];
-    for (const result of results) {
-      for (const options of this.searchOptions) {
-        if (options.description === result.description) {
-          filteredResultsList.push(result);
-        }
+  resetList() {
+    this._searchResults.next([]);
+  }
+
+  getSearchResults(): Observable<SearchResult[]> {
+    // TODO put these in .env file?
+    let PAGE_PARAM = 'p=' + this.pageNumber;
+    let FIELD_PARAM = 'd=' + this.descriptionFilter;
+    let TYPE_PARAM = 't=' + this.fileType;
+    let SEARCH_URL = 'http://localhost:8080/search/?' + PAGE_PARAM + "&" + FIELD_PARAM + "&" + TYPE_PARAM;    console.log(SEARCH_URL)
+
+    let obs = this.http.get<SearchResult[]>(SEARCH_URL);
+    obs.subscribe(
+      res => {
+        let convertedResults: SearchResult[] = [];
+        res.forEach((item) => {
+          convertedResults.push(item['_source']);
+        })
+
+        console.log('Received results');
+        console.log(convertedResults);
+        this._searchResults.next(convertedResults);
       }
-    }
-    console.log(filteredResultsList);
-    return filteredResultsList;
+    )
+    return (obs);
   }
+
 }

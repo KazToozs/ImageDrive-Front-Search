@@ -24,8 +24,10 @@ export class ScrollerComponent implements OnInit {
 
 export class SearchResultsDataSource extends DataSource<SearchResult | undefined> {
   private cachedResults = Array.from<SearchResult>({ length: 0 });
-  private dataStream = new BehaviorSubject<(SearchResult | undefined)[]>(this.cachedResults);
-  private subscription = new Subscription();
+  // private dataStream = new BehaviorSubject<(SearchResult | undefined)[]>(this.cachedResults);
+  private dataStream: BehaviorSubject<(SearchResult | undefined)[]>;
+  private listSubscription = new Subscription();
+  private scrollSubscription = new Subscription();
   private pageSize = 20;
   private lastPage = 0;
 
@@ -33,13 +35,16 @@ export class SearchResultsDataSource extends DataSource<SearchResult | undefined
 
   constructor(private dataService: SearchDataService) {
     super();
+    this.listSubscription = this.dataService.searchResults
+       .subscribe(results => this.cachedResults = results)
+    this.dataStream = new BehaviorSubject<(SearchResult | undefined)[]>(this.cachedResults);
     this._fetchResultPage();
-
   }
 
   connect(collectionViewer: CollectionViewer): Observable<(SearchResult | undefined)[] | ReadonlyArray<SearchResult | undefined>> {
-    this.subscription.add(collectionViewer.viewChange.subscribe(range => {
+    this.scrollSubscription.add(collectionViewer.viewChange.subscribe(range => {
       const currentPage = this._getPageForIndex(range.end);
+      // TODO delete these
       console.log('end: ' + range.end)
       console.log(currentPage)
       if (currentPage > this.lastPage) {
@@ -51,20 +56,39 @@ export class SearchResultsDataSource extends DataSource<SearchResult | undefined
     return this.dataStream;
   }
 
+  _filterResults(val) {
+    if (typeof val != "string") {
+        return [];
+    }
+    if (val === '' || val === null) {
+        return [];
+    }
+    let ret = val ? this.cachedResults.filter(s => s.description.toLowerCase().indexOf(val.toLowerCase()) !== -1)
+        : this.cachedResults;
+}
+
   disconnect(collectionViewer: CollectionViewer): void {
-    this.subscription.unsubscribe();
+    this.scrollSubscription.unsubscribe();
+    this.listSubscription.unsubscribe();
   }
 
 
   private _fetchResultPage(): void {
-      this.dataService.getSearchResults().subscribe(res => {
-        let convertedResults: SearchResult[] = [];
-        res.forEach((item) => {
-          convertedResults.push(item['_source'])
-        })
-        this.cachedResults = this.cachedResults.concat(convertedResults);
-        this.dataStream.next(this.cachedResults);
-      });
+    this.dataService.getSearchResults();
+    this.dataService.searchResults.subscribe(results => {
+        this.cachedResults = this.cachedResults.concat(results);
+        this.dataStream.next(this.cachedResults)
+      })
+
+      // this.dataService.getSearchResults().subscribe(res => {
+      //   let convertedResults: SearchResult[] = [];
+      //   res.forEach((item) => {
+      //     convertedResults.push(item['_source'])
+      //   })
+      //   this.cachedResults = this.cachedResults.concat(convertedResults);
+      //   // this._filterResults(this.dataService.descriptionFilter);
+      //   this.dataStream.next(this.cachedResults);
+      // });
   }
 
   private _getPageForIndex(i: number): number {
