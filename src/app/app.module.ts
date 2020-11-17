@@ -16,6 +16,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { SearchDataService } from './services/search-data.service';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { ScrollerComponent } from './component/scroller/scroller.component';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { ScrollerComponent } from './component/scroller/scroller.component';
     MatAutocompleteModule,
     MatChipsModule,
     ScrollingModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    MatButtonToggleModule
   ],
   providers: [
     SearchDataService
