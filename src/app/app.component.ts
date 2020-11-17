@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SearchDataService } from './services/search-data.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'search-app';
+
+  constructor(
+    private dataService: SearchDataService
+  ) { }
+
 }

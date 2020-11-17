@@ -5,6 +5,49 @@
 
 .search-bar-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
   flex-direction: row;
+  height: 100px;
+  width: 100%;
+  div {
+    margin: 10px;
+  }
 }
+
+.file-type-search {
+  display: flex;
+}
+
+.description-search {
+}
+
+.size-search {
+}
+
+.mat-hint {
+  color: lightgray;
+}
+
+#file-label {
+  color: lightgray;
+}
+
+::ng-deep .mat-form-field {
+  .mat-input-element {
+      color: black;
+  }
+  .mat-form-field-label {
+      color: black;
+  }
+  .mat-form-field-underline {
+      background-color: black;
+  }
+  .mat-form-field-ripple {
+      background-color: black;
+  }
+  .mat-form-field-required-marker {
+      color: black;
+  }
+}
+

@@ -1,15 +1,28 @@
 <div class="search-bar-row">
-  <mat-form-field class="example-full-width">
-      <mat-label>Description</mat-label>
-      <input matInput #message maxlength="256" (input)="inputChanged(message.value)">
-      <mat-hint align="end">{{message.value.length}} / 256</mat-hint>
+  <div class="description-search">
+  <mat-form-field [floatLabel]="'always'" class="example-full-width">
+    <mat-label>Search description</mat-label>
+      <input matInput #message maxlength="256" [(ngModel)]="descriptionSearch" (input)="inputChanged()">
+      <mat-hint align="start"></mat-hint>
     </mat-form-field>
-  <div>
-    <mat-label></mat-label>
-    <mat-button-toggle-group name="fontStyle" aria-label="Font Style">
+</div>
+
+  <div class="file-size-search">
+    <mat-form-field [floatLabel]="'always'" class="example-full-width">
+      <mat-label>Search size</mat-label>
+      <input matInput #message min="0" max="500000" [(ngModel)]="minSize" type="number" (input)="checkSizeChange()">
+      <mat-hint align="start"></mat-hint>
+    </mat-form-field>
+    <mat-label> - </mat-label>
+    <mat-form-field [floatLabel]="'always'" class="example-full-width">
+      <input matInput #message min="0" max="500000" [(ngModel)]="maxSize" type="number" (input)="checkSizeChange()">
+    </mat-form-field>
+  </div>
+  <div class="file-type-search">
+    <mat-button-toggle-group name="fontStyle" aria-label="Font Style" [(ngModel)]="fileTypeFilter" (change)="handleChange()">
       <mat-button-toggle value="any">Any</mat-button-toggle>
       <mat-button-toggle value="png">PNG</mat-button-toggle>
-      <mat-button-toggle value="jpeg">JPG</mat-button-toggle>
+      <mat-button-toggle value="jpeg">JPEG</mat-button-toggle>
     </mat-button-toggle-group>
   </div>
 </div>

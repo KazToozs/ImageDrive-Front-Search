@@ -10,7 +10,6 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatFormFieldModule} from '@angular/material/form-field';
 
-import { HomePageComponent } from './component/home-page/home-page.component';
 import { SearchBarComponent } from './component/search-bar/search-bar.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SearchDataService } from './services/search-data.service';
@@ -21,7 +20,6 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 @NgModule({
   declarations: [
     AppComponent,
-    HomePageComponent,
     SearchBarComponent,
     ScrollerComponent,
   ],

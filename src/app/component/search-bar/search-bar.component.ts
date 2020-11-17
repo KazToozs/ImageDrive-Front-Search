@@ -1,9 +1,8 @@
-import { Component, OnInit, ViewChild, ElementRef, EventEmitter, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { Subject, Subscription } from 'rxjs';
 import { SearchDataService } from 'src/app/services/search-data.service';
-import { SearchResult } from '../../searchResult';
 import { debounceTime } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-search-bar',
@@ -13,7 +12,11 @@ import { debounceTime } from 'rxjs/operators';
 export class SearchBarComponent implements OnInit {
   private modelChanged: Subject<string> = new Subject<string>();
   private subscription: Subscription;
-  debounceTime = 1000;
+  debounceTime = 750;
+  descriptionSearch = '';
+  minSize = 0;
+  maxSize = 500000;
+  fileTypeFilter = "any";
 
   constructor(
     public dataService: SearchDataService
@@ -24,20 +27,37 @@ export class SearchBarComponent implements OnInit {
       .pipe(
         debounceTime(this.debounceTime),
       )
-      .subscribe((val) => {
-        this.handleChange(val);
+      .subscribe(() => {
+        this.handleChange();
       });
   }
 
-  handleChange(val) {
-    this.dataService.descriptionFilter = val;
+  handleChange() {
+    this.dataService.descriptionFilter = this.descriptionSearch;
+    this.dataService.fileSizeMax = this.maxSize;
+    this.dataService.fileSizeMin = this.minSize;
+    this.dataService.fileType = this.fileTypeFilter;
+    console.log("Search settings")
+    console.log(this.descriptionSearch);
+    console.log(this.fileTypeFilter);
+    console.log(this.minSize);
+    console.log(this.maxSize);
     this.dataService.resetList();
     this.dataService.getSearchResults();
   }
 
+  checkSizeChange() {
+    if (this.minSize > this.maxSize) {
+      // TODO make UI service error or form validation error
+      return;
+    }
+    else {
+      this.inputChanged();
+    }
+  }
 
-  inputChanged(val) {
-    this.modelChanged.next(val)
+  inputChanged() {
+    this.modelChanged.next();
   }
 
   ngOnDestroy(): void {
