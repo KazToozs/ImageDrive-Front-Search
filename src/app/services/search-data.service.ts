@@ -29,18 +29,26 @@ import { EventEmitter, Injectable } from '@angular/core';
 })
 export class SearchDataService {
   private _searchResults: BehaviorSubject<SearchResult[]> = new BehaviorSubject([]);
-  pageNumber = 0;
+  // TODO necessary to set these as behavioursubjects?
+  private _pageNumber: BehaviorSubject<number> = new BehaviorSubject(0);
+  private _lastPageNumber: BehaviorSubject<number> = new BehaviorSubject(0);
+
+  public readonly searchResults: Observable<SearchResult[]> = this._searchResults.asObservable();
+  public readonly pageNumber: Observable<number> = this._pageNumber.asObservable();
+  public readonly lastPageNumeber: Observable<number> = this._lastPageNumber.asObservable();
+
   descriptionFilter = '';
   fileType = 'any';
   fileSizeMin = 0;
   fileSizeMax = 500000;
-  public readonly searchResults: Observable<SearchResult[]> = this._searchResults.asObservable();
 
   constructor(private http: HttpClient) {
     // load initial data
   }
 
   resetList() {
+    this._pageNumber.next(0);
+    this._lastPageNumber.next(0);
     this._searchResults.next([]);
   }
 
@@ -48,7 +56,7 @@ export class SearchDataService {
     let url = 'http://localhost:8080/search/?';
     let params = new URLSearchParams();
 
-    params.append('p', this.pageNumber.toString());
+    params.append('p', this._pageNumber.getValue().toString());
     params.append('mn', this.fileSizeMin.toString());
     params.append('mx', this.fileSizeMax.toString());
     if (this.descriptionFilter) {
@@ -71,17 +79,26 @@ export class SearchDataService {
     obs.subscribe(
       res => {
         let convertedResults: SearchResult[] = [];
-        console.log(res)
         res.forEach((item) => {
           convertedResults.push(item['_source']);
         })
-
         console.log('Received results');
         console.log(convertedResults);
-        this._searchResults.next(convertedResults);
+        this._searchResults.next(this._searchResults.getValue().concat(convertedResults));
       }
     )
     return (obs);
   }
 
+  setPageNumber(num: number) {
+    this._pageNumber.next(num);
+  }
+
+  setLastPageNumber(num: number) {
+    this._lastPageNumber.next(num);
+  }
+
+  getLastPageNumber(): number {
+    return this._lastPageNumber.getValue();
+  }
 }
