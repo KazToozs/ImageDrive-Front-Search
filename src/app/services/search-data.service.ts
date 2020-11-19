@@ -1,67 +1,48 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 import { SearchResult } from '../searchResult';
-import { BehaviorSubject, Subject, Observable } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { EventEmitter, Injectable } from '@angular/core';
-
-// @Injectable({
-//   providedIn: 'root'
-// })
-// export class SearchDataService {
-//   private searchResults: Observable<SearchResult[]>;
-
-//   //TODO delete this
-//   constructor(private http: HttpClient) {
-//    }
-
-//   getSearchResults(pageNumber, description) {
-//     // TODO put these in .env file?
-//     let PAGE_PARAM = 'page=' + pageNumber;
-//     let FIELD_PARAM = 'field=' + 'description';
-//     let SEARCH_URL = 'http://localhost:8080/search/?' + PAGE_PARAM + "&" + FIELD_PARAM;    console.log(SEARCH_URL)
-
-//     this.searchResults = this.http.get<SearchResult[]>(SEARCH_URL);
-//   }
-
-// }
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchDataService {
-  private _searchResults: BehaviorSubject<SearchResult[]> = new BehaviorSubject([]);
-  // TODO necessary to set these as behavioursubjects?
-  private _pageNumber: BehaviorSubject<number> = new BehaviorSubject(0);
-  private _lastPageNumber: BehaviorSubject<number> = new BehaviorSubject(0);
+  private searchResultsSubject: BehaviorSubject<SearchResult[]> = new BehaviorSubject([]);
+  private pageNumberSubject: BehaviorSubject<number> = new BehaviorSubject(0);
+  private lastPageNumberSubject: BehaviorSubject<number> = new BehaviorSubject(0);
+  private UIMessageSubject: BehaviorSubject<string> = new BehaviorSubject('Data service injected...');
 
-  public readonly searchResults: Observable<SearchResult[]> = this._searchResults.asObservable();
-  public readonly pageNumber: Observable<number> = this._pageNumber.asObservable();
-  public readonly lastPageNumeber: Observable<number> = this._lastPageNumber.asObservable();
+  public readonly searchResults: Observable<SearchResult[]> = this.searchResultsSubject.asObservable();
+  public readonly pageNumber: Observable<number> = this.pageNumberSubject.asObservable();
+  public readonly lastPageNumber: Observable<number> = this.lastPageNumberSubject.asObservable();
+  public readonly UIMessage: Observable<string> = this.UIMessageSubject.asObservable();
 
+  // Make these private with getters/setters, observables?
   descriptionFilter = '';
   fileType = 'any';
   fileSizeMin = 0;
   fileSizeMax = 500000;
 
   constructor(private http: HttpClient) {
-    // load initial data
   }
 
   resetList() {
-    this._pageNumber.next(0);
-    this._lastPageNumber.next(0);
-    this._searchResults.next([]);
+    this.pageNumberSubject.next(0);
+    this.lastPageNumberSubject.next(0);
+    this.searchResultsSubject.next([]);
   }
 
   constructSearchURL(): string {
-    let url = 'http://localhost:8080/search/?';
-    let params = new URLSearchParams();
+    const url = `http://${environment.apiUrl}:${environment.apiPort}/search/?`;
+    const params = new URLSearchParams();
 
-    params.append('p', this._pageNumber.getValue().toString());
+    params.append('p', this.pageNumberSubject.getValue().toString());
     params.append('mn', this.fileSizeMin.toString());
     params.append('mx', this.fileSizeMax.toString());
     if (this.descriptionFilter) {
       console.log('constructing description param:' + this.descriptionFilter);
-      params.append('d', this.descriptionFilter);
+      params.append('d', encodeURIComponent(this.descriptionFilter));
     }
     if (this.fileType !== 'any') {
       params.append('t', this.fileType);
@@ -70,35 +51,54 @@ export class SearchDataService {
     return url + params.toString();
   }
 
-  getSearchResults(): Observable<SearchResult[]> {
+  getSearchResults() {
     // TODO put these in .env file?
-    let url = this.constructSearchURL();
-    console.log(url)
-    let obs = this.http.get<SearchResult[]>(url);
+    const url = this.constructSearchURL();
+    console.log(url);
+    this.setUIMessage('Searching, please wait...');
+    const obs = this.http.get<SearchResult[]>(url, {observe: 'response'});
     // TODO handle 500 error here
     obs.subscribe(
       res => {
-        let convertedResults: SearchResult[] = [];
-        res.forEach((item) => {
-          convertedResults.push(item['_source']);
-        })
-        console.log('Received results');
+        const convertedResults: SearchResult[] = [];
+        if (res.status === 204) {
+          // TODO UI service for no results
+          this.setUIMessage('No results returned!');
+          console.log('EMPTY RESULTS');
+        } else if (res.status === 200) {
+          this.setUIMessage('Search results received!');
+          res.body.forEach((item) => {
+            convertedResults.push(item[`_source`]);
+          });
+        }
         console.log(convertedResults);
-        this._searchResults.next(this._searchResults.getValue().concat(convertedResults));
+        this.searchResultsSubject.next(this.searchResultsSubject.getValue().concat(convertedResults));
+      },
+      err => {
+        this.setUIMessage(`An error occured with the search query: ${err.status}: ${err.error}`);
+        console.log(err);
       }
-    )
-    return (obs);
+    );
   }
 
   setPageNumber(num: number) {
-    this._pageNumber.next(num);
+    this.pageNumberSubject.next(num);
   }
 
   setLastPageNumber(num: number) {
-    this._lastPageNumber.next(num);
+    this.lastPageNumberSubject.next(num);
   }
 
   getLastPageNumber(): number {
-    return this._lastPageNumber.getValue();
+    return this.lastPageNumberSubject.getValue();
   }
+
+  getUIMessage(): Observable<string> {
+    return this.UIMessage;
+  }
+
+  setUIMessage(str: string) {
+    this.UIMessageSubject.next(str);
+  }
+
 }

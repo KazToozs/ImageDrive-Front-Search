@@ -1,5 +1,9 @@
 <div>
+<div class="ui-message">
+    {{UIMessage | async}}
+</div>
 <cdk-virtual-scroll-viewport itemSize="150" class="scroll-viewport">
+  <ul>
   <li *cdkVirtualFor="let result of dataSource">
 
     <div *ngIf="result" class="result-item">
@@ -8,10 +12,12 @@
       <p><strong>Size: </strong>{{result.size}}</p>
     </div>
     <div *ngIf="!result">
-      Loading ...
+      {{UIMessage | async}}
     </div>
     <hr class="solid">
   </li>
+  </ul>
 
 </cdk-virtual-scroll-viewport>
+
 </div>

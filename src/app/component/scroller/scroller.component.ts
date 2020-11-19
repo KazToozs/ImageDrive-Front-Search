@@ -11,9 +11,11 @@ import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 })
 export class ScrollerComponent implements OnInit {
 
+  UIMessage: Observable<string>;
   dataSource: SearchResultsDataSource;
 
   constructor(private dataService: SearchDataService) {
+    this.UIMessage = dataService.getUIMessage();
     this.dataSource = new SearchResultsDataSource(dataService);
   }
 
@@ -23,10 +25,7 @@ export class ScrollerComponent implements OnInit {
 }
 
 export class SearchResultsDataSource extends DataSource<SearchResult | undefined> {
-  // private cachedResults = Array.from<SearchResult>({ length: 0 });
-  // private dataStream = new BehaviorSubject<(SearchResult | undefined)[]>(this.cachedResults);
   private dataStream: BehaviorSubject<(SearchResult | undefined)[]>;
-  // private listSubscription = new Subscription();
   private scrollSubscription = new Subscription();
   private pageSize = 20;
 
@@ -60,25 +59,9 @@ export class SearchResultsDataSource extends DataSource<SearchResult | undefined
 
   private _fetchResultPage(): void {
     this.dataService.getSearchResults();
-    // this.dataService.searchResults.subscribe(results => {
-    //   if (results.length) {
-    //     this.cachedResults = this.cachedResults.concat(results);
-    //     this.dataStream.next(this.cachedResults);
-    //   }
-    // });
     this.dataService.searchResults.subscribe(results => {
           this.dataStream.next(results);
       });
-
-    // this.dataService.getSearchResults().subscribe(res => {
-    //   let convertedResults: SearchResult[] = [];
-    //   res.forEach((item) => {
-    //     convertedResults.push(item['_source'])
-    //   })
-    //   this.cachedResults = this.cachedResults.concat(convertedResults);
-    //   // this._filterResults(this.dataService.descriptionFilter);
-    //   this.dataStream.next(this.cachedResults);
-    // });
   }
 
   private _getPageForIndex(i: number): number {

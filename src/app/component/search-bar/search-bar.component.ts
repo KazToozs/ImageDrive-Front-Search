@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { SearchDataService } from 'src/app/services/search-data.service';
 import { debounceTime } from 'rxjs/operators';
@@ -9,17 +9,19 @@ import { debounceTime } from 'rxjs/operators';
   templateUrl: './search-bar.component.html',
   styleUrls: ['./search-bar.component.scss']
 })
-export class SearchBarComponent implements OnInit {
+export class SearchBarComponent implements OnInit, OnDestroy {
   private modelChanged: Subject<string> = new Subject<string>();
   private subscription: Subscription;
   debounceTime = 750;
   descriptionSearch = '';
   minSize = 0;
   maxSize = 500000;
-  fileTypeFilter = "any";
+  fileTypeFilter = 'any';
+
+  validationError: boolean;
 
   constructor(
-    public dataService: SearchDataService
+    private dataService: SearchDataService
   ) { }
 
   ngOnInit(): void {
@@ -37,7 +39,7 @@ export class SearchBarComponent implements OnInit {
     this.dataService.fileSizeMax = this.maxSize;
     this.dataService.fileSizeMin = this.minSize;
     this.dataService.fileType = this.fileTypeFilter;
-    console.log("Search settings")
+    console.log('Search settings');
     console.log(this.descriptionSearch);
     console.log(this.fileTypeFilter);
     console.log(this.minSize);
@@ -49,9 +51,11 @@ export class SearchBarComponent implements OnInit {
   checkSizeChange() {
     if (this.minSize > this.maxSize) {
       // TODO make UI service error or form validation error
+      this.validationError = true;
       return;
     }
     else {
+      this.validationError = false;
       this.inputChanged();
     }
   }
