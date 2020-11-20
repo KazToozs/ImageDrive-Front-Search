@@ -45,7 +45,7 @@ export class SearchDataService {
       params.append('d', encodeURIComponent(this.descriptionFilter));
     }
     if (this.fileType !== 'any') {
-      params.append('t', this.fileType);
+      params.append('t', encodeURIComponent(this.fileType));
     }
 
     return url + params.toString();
