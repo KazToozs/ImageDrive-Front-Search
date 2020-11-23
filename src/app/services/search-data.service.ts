@@ -33,7 +33,7 @@ export class SearchDataService {
     this.searchResultsSubject.next([]);
   }
 
-  constructSearchURL(): string {
+  private constructSearchURL(): string {
     const url = `http://${environment.apiUrl}:${environment.apiPort}/search/?`;
     const params = new URLSearchParams();
 

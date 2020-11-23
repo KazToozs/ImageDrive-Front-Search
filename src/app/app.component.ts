@@ -7,7 +7,7 @@ import { SearchDataService } from './services/search-data.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'search-app';
+  title = 'Image Data';
 
   constructor(
     private dataService: SearchDataService

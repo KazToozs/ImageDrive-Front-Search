@@ -39,11 +39,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.dataService.fileSizeMax = this.maxSize;
     this.dataService.fileSizeMin = this.minSize;
     this.dataService.fileType = this.fileTypeFilter;
-    console.log('Search settings');
-    console.log(this.descriptionSearch);
-    console.log(this.fileTypeFilter);
-    console.log(this.minSize);
-    console.log(this.maxSize);
     this.dataService.resetList();
     this.dataService.getSearchResults();
   }

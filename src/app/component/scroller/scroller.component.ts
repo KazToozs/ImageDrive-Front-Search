@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CollectionViewer, DataSource } from '@angular/cdk/collections';
 import { SearchResult } from 'src/app/searchResult';
-import { SearchDataService } from 'src/app/services/search-data.service';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { SearchDataService } from 'src/app/services/search-data.service';
 
 @Component({
   selector: 'app-scroller',
@@ -40,9 +40,6 @@ export class SearchResultsDataSource extends DataSource<SearchResult | undefined
   connect(collectionViewer: CollectionViewer): Observable<(SearchResult | undefined)[] | ReadonlyArray<SearchResult | undefined>> {
     this.scrollSubscription.add(collectionViewer.viewChange.subscribe(range => {
       const currentPage = this._getPageForIndex(range.end);
-      // TODO delete these
-      console.log('end: ' + range.end);
-      console.log(currentPage);
       if (currentPage > this.dataService.getLastPageNumber()) {
         this.dataService.setLastPageNumber(currentPage);
         this.dataService.setPageNumber(currentPage);
