@@ -43,7 +43,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.dataService.getSearchResults();
   }
 
-  checkSizeChange() {
+  validateSearch() {
     if (this.minSize > this.maxSize) {
       // TODO make UI service error or form validation error
       this.validationError = true;
@@ -51,12 +51,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
     else {
       this.validationError = false;
-      this.inputChanged();
+      this.modelChanged.next();
     }
-  }
-
-  inputChanged() {
-    this.modelChanged.next();
   }
 
   ngOnDestroy(): void {

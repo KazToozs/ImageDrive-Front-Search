@@ -38,7 +38,7 @@ describe('SearchBarComponent', () => {
     it('should set validationError to true if values are incorrect', () => {
       component.minSize = 500;
       component.maxSize = 250;
-      component.checkSizeChange();
+      component.validateSearch();
       expect(component.validationError).toBeTrue();
     });
 
@@ -47,7 +47,7 @@ describe('SearchBarComponent', () => {
       component.maxSize = 250;
       component.fileTypeFilter = 'any';
       component.descriptionSearch = 'test';
-      component.checkSizeChange();
+      component.validateSearch();
 
       tick(750);
       expect(component.validationError).toBeFalse();
