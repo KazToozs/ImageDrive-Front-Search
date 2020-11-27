@@ -52,17 +52,14 @@ export class SearchDataService {
   }
 
   getSearchResults() {
-    // TODO put these in .env file?
     const url = this.constructSearchURL();
     console.log(url);
     this.setUIMessage('Searching, please wait...');
     const obs = this.http.get<SearchResult[]>(url, {observe: 'response'});
-    // TODO handle 500 error here
     obs.subscribe(
       res => {
         const convertedResults: SearchResult[] = [];
         if (res.status === 204) {
-          // TODO UI service for no results
           this.setUIMessage('No results returned!');
           console.log('EMPTY RESULTS');
         } else if (res.status === 200) {

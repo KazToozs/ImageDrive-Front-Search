@@ -45,7 +45,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   validateSearch() {
     if (this.minSize > this.maxSize) {
-      // TODO make UI service error or form validation error
       this.validationError = true;
       return;
     }
