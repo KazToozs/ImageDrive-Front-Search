@@ -1,4 +1,5 @@
-# Q2 Search Feature
+### Description
+Fullstack Angular/NodeJs app with 80% test coverage. Using data from AWS RDS database in https://github.com/KazToozs/ImageDrive-Upload, this application will migrate the data from that DB to an AWS Elasticsearch instance and display it via API call to a frontend in an infinite scrolling list, with search and filter functionalities.
 
 ### Dependencies
 - A **AWS RDS instance** with MySQL database containing table **uploads** to migrate from (eg. **main.uploads**)
