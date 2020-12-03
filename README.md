@@ -1,5 +1,6 @@
 ### Description
 Fullstack Angular/NodeJs app with 80% test coverage. Using data from AWS RDS database in https://github.com/KazToozs/ImageDrive-Upload, this application will migrate the data from that DB to an AWS Elasticsearch instance and display it via API call to a frontend in an infinite scrolling list, with search and filter functionalities.
+
 **Demo here**: https://youtu.be/xq7EJGyKeV4
 
 ### Dependencies
