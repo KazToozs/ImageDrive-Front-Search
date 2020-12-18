@@ -94,6 +94,4 @@ sonar.coverage.exclusions=migrations\\*,test\\**\\*,src\\**\\*.spec.js,src\\**\\
 sonar.javascript.lcov.reportPaths=coverage\\lcov.info
 sonar.testExecutionReportPaths=test-report.xml
 ```
-#### Contact
-Email: will2s.hobson@gmail.com
-Phone: +33 6 72 94 93 46 
+
