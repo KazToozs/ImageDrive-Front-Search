@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "fresh-start": "(npm run install-all) & npm run initialise",
-    "install-all": "npm install && cd ../backend-search && npm install",
-    "initialise": "concurrently \"cd ../backend-search && npm run initialise\" \"npm run start\"",
-    "dev": "concurrently \"cd ../backend-search && npm run start\" \"npm run start\"",
+    "install-all": "npm install && cd ../backend && npm install",
+    "initialise": "concurrently \"cd ../backend && npm run initialise\" \"npm run start\"",
+    "dev": "concurrently \"cd ../backend && npm run start\" \"npm run start\"",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
